@@ -1,5 +1,5 @@
 import { ExternalLink, Clock, TrendingUp } from 'lucide-react';
-import { NewsItem } from '@/hooks/useWebSocket';
+import { NewsItem } from '@/types/News';
 
 interface NewsCardProps {
   news: NewsItem;
@@ -25,10 +25,10 @@ const formatTimestamp = (timestamp: number) => {
   });
 };
 
-// Détecte le type de news
-const getNewsType = (news: NewsItem) => {
-  if ('body' in news && 'link' in news) return 'tweet';
-  if ('source' in news && 'url' in news) return 'article';
+// Utility to determine news type
+const getNewsType = (news: NewsItem): 'tweet' | 'article' | 'unknown' => {
+  if (news.link?.includes('twitter.com') || news.type === 'direct') return 'tweet';
+  if (news.source && news.url) return 'article';
   return 'unknown';
 };
 

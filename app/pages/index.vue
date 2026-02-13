@@ -8,7 +8,7 @@ useHead({ title: 'CryptoFeed — Dashboard' })
       CryptoFeed
     </h1>
     <p class="px-8 text-text-secondary">
-      Dashboard en construction.
+      Dashboard under construction.
     </p>
   </div>
 </template>

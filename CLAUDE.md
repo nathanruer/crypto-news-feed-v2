@@ -346,6 +346,7 @@ Une fois toutes les tâches complétées :
 
 ### Code style
 
+- **Langue du code : anglais uniquement** — tous les commentaires, noms de variables, JSDoc, messages de log, et textes placeholder doivent être en anglais. Le français est réservé à la documentation (CLAUDE.md, specs, milestones).
 - **TypeScript strict** : `strict: true`, pas de `any` sauf cas exceptionnel documenté
 - **Composition API** uniquement (pas d'Options API)
 - **`<script setup lang="ts">`** pour tous les composants Vue

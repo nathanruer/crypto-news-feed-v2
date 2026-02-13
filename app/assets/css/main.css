@@ -1,0 +1,44 @@
+@import 'tailwindcss';
+
+:root {
+  /* Surfaces */
+  --color-bg-primary: #0a0a0f;
+  --color-bg-secondary: #12121a;
+  --color-bg-tertiary: #1a1a26;
+
+  /* Texte */
+  --color-text-primary: #e4e4ed;
+  --color-text-secondary: #8888a0;
+  --color-text-accent: #6d9cff;
+
+  /* Sémantique */
+  --color-bullish: #00d68f;
+  --color-bearish: #ff4d6a;
+  --color-warning: #ffaa2c;
+  --color-info: #3d8bff;
+
+  /* Typographie */
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-sans: 'Inter', sans-serif;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-bg-primary);
+  color: var(--color-text-primary);
+}
+
+@theme {
+  --color-bg-primary: var(--color-bg-primary);
+  --color-bg-secondary: var(--color-bg-secondary);
+  --color-bg-tertiary: var(--color-bg-tertiary);
+  --color-text-primary: var(--color-text-primary);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-accent: var(--color-text-accent);
+  --color-bullish: var(--color-bullish);
+  --color-bearish: var(--color-bearish);
+  --color-warning: var(--color-warning);
+  --color-info: var(--color-info);
+  --font-mono: var(--font-mono);
+  --font-sans: var(--font-sans);
+}

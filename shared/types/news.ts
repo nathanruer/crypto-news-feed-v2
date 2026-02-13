@@ -3,8 +3,10 @@ export interface NewsItem {
   title: string
   body: string
   source: string
+  sourceName: string
   url: string
   tickers: string[]
+  time: Date
   receivedAt: Date
-  originalData: unknown
+  rawData: unknown
 }

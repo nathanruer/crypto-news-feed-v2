@@ -1,4 +1,4 @@
-/** Message brut reçu du WSS Tree of Alpha (multiple formats: news, tweets, etc.) */
+/** Raw message received from Tree of Alpha WSS (multiple formats: news, tweets, etc.) */
 export interface TreeOfAlphaMessage {
   _id: string
   title: string
@@ -36,7 +36,7 @@ export interface TreeOfAlphaAction {
   icon: string
 }
 
-/** Événements envoyés aux clients via le WS interne */
+/** Events sent to clients via the internal WS */
 export type WsClientEvent
   = | { type: 'news', data: TreeOfAlphaMessage }
     | { type: 'status', status: ConnectionStatus }

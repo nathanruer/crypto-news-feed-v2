@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach } from 'vitest'
 import { normalizeToNewsItem } from '../../../server/utils/normalizer'
-import { VALID_NEWS_MESSAGE, MINIMAL_NEWS_MESSAGE } from '../../fixtures/tree-of-alpha-messages'
+import { VALID_NEWS_MESSAGE, MINIMAL_NEWS_MESSAGE, TWEET_MESSAGE } from '../../fixtures/tree-of-alpha-messages'
 
 describe('normalizeToNewsItem', () => {
   afterEach(() => {
@@ -72,5 +72,25 @@ describe('normalizeToNewsItem', () => {
   it('should fallback sourceName to source when sourceName is missing', () => {
     const result = normalizeToNewsItem(MINIMAL_NEWS_MESSAGE)
     expect(result.sourceName).toBe(MINIMAL_NEWS_MESSAGE.source)
+  })
+
+  it('should use body field for tweet messages', () => {
+    const result = normalizeToNewsItem(TWEET_MESSAGE)
+    expect(result.body).toBe(TWEET_MESSAGE.body)
+  })
+
+  it('should use type as source for tweet messages', () => {
+    const result = normalizeToNewsItem(TWEET_MESSAGE)
+    expect(result.source).toBe('direct')
+  })
+
+  it('should use link as url for tweet messages', () => {
+    const result = normalizeToNewsItem(TWEET_MESSAGE)
+    expect(result.url).toBe(TWEET_MESSAGE.link)
+  })
+
+  it('should extract tickers from tweet suggestions', () => {
+    const result = normalizeToNewsItem(TWEET_MESSAGE)
+    expect(result.tickers).toEqual(['WAL'])
   })
 })

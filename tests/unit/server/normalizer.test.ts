@@ -63,4 +63,14 @@ describe('normalizeToNewsItem', () => {
     const result = normalizeToNewsItem(VALID_NEWS_MESSAGE)
     expect(result.rawData).toEqual(VALID_NEWS_MESSAGE)
   })
+
+  it('should fallback body to title when en is missing', () => {
+    const result = normalizeToNewsItem(MINIMAL_NEWS_MESSAGE)
+    expect(result.body).toBe(MINIMAL_NEWS_MESSAGE.title)
+  })
+
+  it('should fallback sourceName to source when sourceName is missing', () => {
+    const result = normalizeToNewsItem(MINIMAL_NEWS_MESSAGE)
+    expect(result.sourceName).toBe(MINIMAL_NEWS_MESSAGE.source)
+  })
 })

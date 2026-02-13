@@ -3,9 +3,9 @@ export interface TreeOfAlphaMessage {
   _id: string
   title: string
   source: string
-  sourceName: string
+  sourceName?: string
   url: string
-  en: string
+  en?: string
   time: number
   symbols: string[]
   suggestions: TreeOfAlphaSuggestion[]

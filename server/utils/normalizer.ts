@@ -6,9 +6,9 @@ export function normalizeToNewsItem(message: TreeOfAlphaMessage): NewsItem {
   return {
     id: message._id,
     title: message.title,
-    body: message.en,
+    body: message.en || message.title,
     source: message.source,
-    sourceName: message.sourceName,
+    sourceName: message.sourceName || message.source,
     url: message.url,
     tickers: extractTickers(message),
     time: new Date(message.time),

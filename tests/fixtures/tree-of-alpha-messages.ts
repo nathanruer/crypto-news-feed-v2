@@ -43,6 +43,30 @@ export const MINIMAL_NEWS_MESSAGE: TreeOfAlphaMessage = {
   firstPrice: {},
 }
 
+export const TWEET_MESSAGE: TreeOfAlphaMessage = {
+  _id: '2022332462836457512',
+  title: 'Walrus (@WalrusProtocol)',
+  body: 'QUICK REMINDER: @OneFootball is storing their entire football content library on Walrus.',
+  type: 'direct',
+  link: 'https://twitter.com/WalrusProtocol/status/2022332462836457512',
+  coin: 'WAL',
+  time: 1770996607573,
+  symbols: [],
+  suggestions: [
+    {
+      coin: 'WAL',
+      found: ['WAL', 'walrus'],
+      symbols: [
+        { exchange: 'binance-futures', symbol: 'WALUSDT' },
+        { exchange: 'binance', symbol: 'WALUSDT' },
+      ],
+      supply: 1511666667,
+    },
+  ],
+  actions: [],
+  firstPrice: {},
+}
+
 export const MALFORMED_JSON = '{ invalid json }'
 
 export const UNKNOWN_FORMAT_MESSAGE = JSON.stringify({

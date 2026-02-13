@@ -1,17 +1,26 @@
-/** Message brut reçu du WSS Tree of Alpha */
+/** Message brut reçu du WSS Tree of Alpha (multiple formats: news, tweets, etc.) */
 export interface TreeOfAlphaMessage {
   _id: string
   title: string
-  source: string
-  sourceName?: string
-  url: string
-  en?: string
   time: number
-  symbols: string[]
   suggestions: TreeOfAlphaSuggestion[]
+  // News fields
+  source?: string
+  sourceName?: string
+  url?: string
+  en?: string
+  symbols: string[]
   actions: TreeOfAlphaAction[]
   firstPrice: Record<string, number>
   delay?: number
+  // Tweet/direct fields
+  body?: string
+  link?: string
+  type?: string
+  coin?: string
+  icon?: string
+  image?: string
+  info?: Record<string, unknown>
 }
 
 export interface TreeOfAlphaSuggestion {

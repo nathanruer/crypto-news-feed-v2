@@ -89,35 +89,9 @@ Providers prévus (par priorité) :
 
 ---
 
-## Fonctionnalités — Priorisation
+## Fonctionnalités — Milestones
 
-### Phase 1 — MVP
-
-- [ ] Connexion WebSocket au flux Tree of Alpha (backend proxy)
-- [ ] Affichage temps réel des news dans un feed scrollable
-- [ ] Normalisation et persistance des news en base
-- [ ] Design responsive, thème sombre par défaut
-- [ ] Filtrage basique (par source, par coin/ticker mentionné)
-- [ ] Recherche full-text dans les news
-- [ ] Alertes in-app (règles simples : mot-clé, ticker)
-- [ ] Page d'historique avec pagination
-
-### Phase 2 — Enrichissements
-
-- [ ] Analytics : volume de news par heure/jour, trending tickers
-- [ ] Graphiques (Chart.js ou D3)
-- [ ] Providers de notification externes (Telegram, Discord)
-- [ ] Gestion avancée des alertes (combinaisons, cooldown, priorités)
-- [ ] Sentiment analysis basique (positif/négatif/neutre)
-- [ ] Export des données (CSV, JSON)
-
-### Phase 3 — Polish
-
-- [ ] Auth utilisateur (si multi-user)
-- [ ] Préférences utilisateur persistées
-- [ ] PWA (notifications push navigateur)
-- [ ] Rate limiting / abuse prevention
-- [ ] Monitoring / health checks
+Les specs, user stories et suivi d'avancement vivent dans `docs/milestones/`. Chaque phase a son dossier avec un README de suivi et un fichier de spec par feature. Une fois une phase terminée, son dossier est supprimé (git conserve l'historique).
 
 ---
 
@@ -132,6 +106,12 @@ crypto-news-feed-v2/
 ├── playwright.config.ts
 ├── vitest.config.ts
 ├── .env.example
+│
+├── docs/                        # Documentation projet
+│   └── milestones/              # Specs et suivi par phase (éphémère)
+│       ├── phase-1-mvp/
+│       ├── phase-2-enrichments/
+│       └── phase-3-polish/
 │
 ├── server/                      # Nitro server
 │   ├── api/                     # API REST routes
@@ -608,7 +588,7 @@ Le CLAUDE.md est un **document vivant** qui s'enrichit au fil du projet.
 | Bug causé par un oubli de convention | Renforcer la règle concernée |
 | Refactoring structurel | Mettre à jour la structure du projet |
 | Nouvelle dépendance ajoutée | Mettre à jour la stack technique |
-| Feature complétée | Cocher dans la checklist des phases |
+| Feature complétée | Mettre à jour l'architecture si elle a évolué |
 | Décision d'architecture prise | Documenter dans Notes d'architecture |
 
 ### Memory files (auto-apprentissage de l'agent)
@@ -636,11 +616,103 @@ Avant chaque commit, l'agent vérifie :
 
 ---
 
-### Git
+## Git — GitHub Flow
 
-- **Branches** : `feature/xxx`, `fix/xxx`, `refactor/xxx`
-- **Commits** : Conventional Commits (`feat:`, `fix:`, `test:`, `refactor:`, `docs:`, `chore:`)
-- **PR** : Toujours avec description et lien vers l'issue/feature
+**Repo** : `crypto-news-feed-v2` (GitHub, public, remote à configurer)
+
+### Stratégie de branching : GitHub Flow
+
+```
+main    ──●────────●────────●──   ← toujours stable, toujours déployable
+           \      /  \      /
+feature/x   ●──●─┘    ●──●─┘     ← branches éphémères, supprimées après merge
+```
+
+- `main` est la branche de référence. Tout code sur `main` **doit** build, lint, et passer les tests.
+- Chaque feature/fix/refactor = **une branche** créée depuis `main`.
+- Chaque branche = **une PR** vers `main`. Pas de merge direct.
+- Après merge, la branche est supprimée.
+
+### Conventions de branches
+
+| Préfixe | Usage | Exemple |
+|---------|-------|---------|
+| `feature/` | Nouvelle fonctionnalité | `feature/ws-proxy` |
+| `fix/` | Correction de bug | `fix/ws-reconnection` |
+| `refactor/` | Refactoring sans changement de comportement | `refactor/news-service` |
+| `test/` | Ajout/amélioration de tests uniquement | `test/alert-coverage` |
+| `chore/` | Config, deps, CI, maintenance | `chore/setup-ci` |
+
+**Nommage** : `prefixe/description-courte-en-kebab-case` (max ~40 chars)
+
+### Conventional Commits
+
+Chaque commit suit le format [Conventional Commits](https://www.conventionalcommits.org/) :
+
+```
+<type>(<scope optionnel>): <description>
+
+[body optionnel]
+
+[footer optionnel]
+```
+
+| Type | Usage |
+|------|-------|
+| `feat` | Nouvelle fonctionnalité |
+| `fix` | Correction de bug |
+| `test` | Ajout ou modification de tests |
+| `refactor` | Refactoring (pas de changement de comportement) |
+| `docs` | Documentation |
+| `chore` | Maintenance (deps, config, CI) |
+| `style` | Formatage (pas de changement de logique) |
+
+**Exemples** :
+```
+feat(ws): implement Tree of Alpha WebSocket proxy
+fix(news): handle malformed JSON from WSS source
+test(normalizer): add edge cases for empty body
+chore: upgrade drizzle-orm to 0.46
+```
+
+### Pull Requests
+
+- **Une PR par feature/fix** — pas de PR fourre-tout
+- **Titre** : reprend le conventional commit principal (ex: `feat(ws): implement Tree of Alpha WebSocket proxy`)
+- **Description** : résumé des changements, test plan, screenshots si UI
+- **Stratégie de merge** : **Squash and merge** — un commit propre par PR sur `main`
+- **Suppression automatique** de la branche après merge
+
+### Workflow concret
+
+```bash
+# 1. S'assurer d'être à jour sur main
+git checkout main && git pull
+
+# 2. Créer une branche
+git checkout -b feature/ws-proxy
+
+# 3. Développer (commits réguliers)
+git add <fichiers>
+git commit -m "feat(ws): implement connection to Tree of Alpha WSS"
+
+# 4. Push la branche (première fois)
+git push -u origin feature/ws-proxy
+
+# 5. Créer la PR (via gh CLI)
+gh pr create --title "feat(ws): implement WS proxy" --body "..."
+
+# 6. Après merge, nettoyer
+git checkout main && git pull
+git branch -d feature/ws-proxy
+```
+
+### Règles strictes
+
+- **Jamais de push direct sur `main`** — toujours une PR
+- **Jamais de force push** sur `main`
+- **Jamais de commit avec des tests qui échouent** sur `main`
+- **L'agent ne push jamais sans demander** — il prépare les commits et branches, le développeur valide
 
 ### Variables d'environnement
 

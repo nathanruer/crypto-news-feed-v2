@@ -3,15 +3,15 @@ export interface TreeOfAlphaMessage {
   _id: string
   title: string
   time: number
-  suggestions: TreeOfAlphaSuggestion[]
+  suggestions?: TreeOfAlphaSuggestion[]
   // News fields
   source?: string
   sourceName?: string
   url?: string
   en?: string
-  symbols: string[]
-  actions: TreeOfAlphaAction[]
-  firstPrice: Record<string, number>
+  symbols?: string[]
+  actions?: TreeOfAlphaAction[]
+  firstPrice?: Record<string, number>
   delay?: number
   // Tweet/direct fields
   body?: string
@@ -38,7 +38,7 @@ export interface TreeOfAlphaAction {
 
 /** Events sent to clients via the internal WS */
 export type WsClientEvent
-  = | { type: 'news', data: TreeOfAlphaMessage }
+  = | { type: 'news', data: import('./news').SerializedNewsItem }
     | { type: 'status', status: ConnectionStatus }
 
 export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected'

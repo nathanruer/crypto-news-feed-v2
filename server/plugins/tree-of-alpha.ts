@@ -9,9 +9,9 @@ export default defineNitroPlugin((nitro) => {
   const service = new TreeOfAlphaService(() => new WebSocket(WS_URL))
 
   service.onNews(async (message) => {
-    broadcast({ type: 'news', data: message })
-
     const newsItem = normalizeToNewsItem(message)
+    broadcast({ type: 'news', data: newsItem })
+
     try {
       await insertNewsItem(newsItem)
     }

@@ -10,12 +10,18 @@ Dashboard fonctionnel affichant en temps réel les news crypto provenant de Tree
 |---|---------|------|--------|
 | 1 | WebSocket proxy Tree of Alpha | PR #1 | Done |
 | 2 | Normalisation et persistance des news | PR #2, #3 | Done |
-| 3 | Feed temps réel (affichage) | — | Pending |
+| 3 | Feed temps réel (affichage) | PR #5 | Done |
 | 4 | Filtrage par source et ticker | — | Pending |
 | 5 | Recherche full-text | — | Pending |
 | 6 | Alertes in-app | — | Pending |
 | 7 | Page d'historique avec pagination | — | Pending |
 | 8 | Design responsive, thème sombre | — | Pending |
+
+## Backlog (chores)
+
+| Chore | Description | Status |
+|-------|-------------|--------|
+| Logger structuré | Remplacer `console.error/log` par un logger (consola/pino) avec niveaux, contexte, format JSON en prod | Pending |
 
 ## Critère de complétion
 

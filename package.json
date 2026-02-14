@@ -33,6 +33,7 @@
   "devDependencies": {
     "@nuxt/eslint": "^1.15.1",
     "@nuxt/test-utils": "^4.0.0",
+    "@pinia/testing": "^1.0.3",
     "@playwright/test": "^1.58.2",
     "@vitest/coverage-v8": "^4.0.18",
     "@vue/test-utils": "^2.4.6",

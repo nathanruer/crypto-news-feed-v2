@@ -7,6 +7,7 @@ const defaultProps = {
   tickers: ['BTC', 'ETH', 'SOL'],
   selectedSources: new Set<string>(),
   selectedTickers: new Set<string>(),
+  searchQuery: '',
 }
 
 describe('NewsFilter', () => {
@@ -87,5 +88,23 @@ describe('NewsFilter', () => {
       props: { ...defaultProps, tickers: [] },
     })
     expect(wrapper.find('[data-testid="tickers-row"]').exists()).toBe(false)
+  })
+
+  it('should render search input', () => {
+    const wrapper = mount(NewsFilter, { props: defaultProps })
+    expect(wrapper.find('[data-testid="search-input"]').exists()).toBe(true)
+  })
+
+  it('should emit update:searchQuery on input', async () => {
+    const wrapper = mount(NewsFilter, { props: defaultProps })
+    await wrapper.find('[data-testid="search-input"]').setValue('bitcoin')
+    expect(wrapper.emitted('update:searchQuery')).toEqual([['bitcoin']])
+  })
+
+  it('should show clear button when search query is active', () => {
+    const wrapper = mount(NewsFilter, {
+      props: { ...defaultProps, searchQuery: 'test' },
+    })
+    expect(wrapper.find('[data-testid="clear-filters"]').exists()).toBe(true)
   })
 })

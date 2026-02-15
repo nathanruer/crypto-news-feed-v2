@@ -26,8 +26,10 @@ onUnmounted(() => {
       :tickers="store.availableTickers"
       :selected-sources="store.selectedSources"
       :selected-tickers="store.selectedTickers"
+      :search-query="store.searchQuery"
       @toggle-source="store.toggleSource"
       @toggle-ticker="store.toggleTicker"
+      @update:search-query="store.setSearchQuery"
       @clear-filters="store.clearFilters"
     />
     <NewsList

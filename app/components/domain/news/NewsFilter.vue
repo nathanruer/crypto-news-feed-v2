@@ -1,14 +1,16 @@
 <script setup lang="ts">
-defineProps<{
+const props = defineProps<{
   sources: string[]
   tickers: string[]
   selectedSources: Set<string>
   selectedTickers: Set<string>
+  searchQuery: string
 }>()
 
 const emit = defineEmits<{
   'toggle-source': [source: string]
   'toggle-ticker': [ticker: string]
+  'update:searchQuery': [query: string]
   'clear-filters': []
 }>()
 
@@ -19,6 +21,15 @@ function isSelected(set: Set<string>, value: string): boolean {
 
 <template>
   <div class="bg-bg-secondary border-b border-bg-tertiary px-6 py-3 space-y-2">
+    <input
+      data-testid="search-input"
+      type="text"
+      placeholder="Search news..."
+      :value="searchQuery"
+      class="w-full bg-bg-tertiary text-text-primary text-sm rounded-lg px-3 py-1.5 placeholder-text-secondary outline-none focus:ring-1 focus:ring-text-accent"
+      @input="emit('update:searchQuery', ($event.target as HTMLInputElement).value)"
+    >
+
     <div
       v-if="sources.length > 0"
       data-testid="sources-row"
@@ -68,7 +79,7 @@ function isSelected(set: Set<string>, value: string): boolean {
     </div>
 
     <div
-      v-if="selectedSources.size > 0 || selectedTickers.size > 0"
+      v-if="selectedSources.size > 0 || selectedTickers.size > 0 || props.searchQuery.length > 0"
       class="flex justify-end"
     >
       <button

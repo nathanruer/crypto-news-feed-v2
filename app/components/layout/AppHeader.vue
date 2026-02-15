@@ -12,7 +12,7 @@ const store = useNewsStore()
         CryptoFeed
       </h1>
       <span class="text-xs text-text-secondary font-mono">
-        {{ store.newsCount }} news
+        {{ store.hasActiveFilters ? `${store.filteredCount}/${store.newsCount}` : store.newsCount }} news
       </span>
     </div>
     <ConnectionStatus :status="store.connectionStatus" />

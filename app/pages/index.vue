@@ -3,6 +3,7 @@ import { onMounted, onUnmounted } from 'vue'
 import { useNewsStore } from '../stores/news'
 import { useNewsFeed } from '../composables/useNewsFeed'
 import NewsList from '../components/domain/news/NewsList.vue'
+import NewsFilter from '../components/domain/news/NewsFilter.vue'
 
 useHead({ title: 'CryptoFeed — Dashboard' })
 
@@ -19,5 +20,20 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <NewsList :items="store.items" />
+  <div class="flex flex-col h-[calc(100vh-3.25rem)]">
+    <NewsFilter
+      :sources="store.availableSources"
+      :tickers="store.availableTickers"
+      :selected-sources="store.selectedSources"
+      :selected-tickers="store.selectedTickers"
+      @toggle-source="store.toggleSource"
+      @toggle-ticker="store.toggleTicker"
+      @clear-filters="store.clearFilters"
+    />
+    <NewsList
+      :items="store.filteredItems"
+      :has-active-filters="store.hasActiveFilters"
+      class="flex-1 min-h-0"
+    />
+  </div>
 </template>

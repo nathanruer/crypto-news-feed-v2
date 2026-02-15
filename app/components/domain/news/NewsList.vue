@@ -3,7 +3,10 @@ import type { NewsItem } from '../../../../shared/types/news'
 import { ref, watch, nextTick } from 'vue'
 import NewsCard from './NewsCard.vue'
 
-const props = defineProps<{ items: NewsItem[] }>()
+const props = defineProps<{
+  items: NewsItem[]
+  hasActiveFilters?: boolean
+}>()
 
 const scrollContainer = ref<HTMLElement | null>(null)
 const userHasScrolled = ref(false)
@@ -23,7 +26,7 @@ watch(() => props.items.length, async () => {
 <template>
   <div
     ref="scrollContainer"
-    class="overflow-y-auto max-h-[calc(100vh-5rem)] space-y-3 pb-8"
+    class="overflow-y-auto h-full space-y-3 pb-8"
     @scroll="handleScroll"
   >
     <template v-if="items.length > 0">
@@ -40,7 +43,7 @@ watch(() => props.items.length, async () => {
     >
       <div class="w-2 h-2 bg-text-secondary rounded-full animate-pulse mb-4" />
       <p class="text-sm">
-        Waiting for news...
+        {{ hasActiveFilters ? 'No news matching current filters' : 'Waiting for news...' }}
       </p>
     </div>
   </div>

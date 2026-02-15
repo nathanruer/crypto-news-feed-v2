@@ -10,6 +10,7 @@ export const useNewsStore = defineStore('news', () => {
   const connectionStatus = ref<ConnectionStatus>('disconnected')
   const selectedSources = ref<Set<string>>(new Set())
   const selectedTickers = ref<Set<string>>(new Set())
+  const searchQuery = ref('')
 
   // --- Getters ---
   const newsCount = computed(() => items.value.length)
@@ -26,16 +27,21 @@ export const useNewsStore = defineStore('news', () => {
   const filteredItems = computed(() => {
     const sources = selectedSources.value
     const tickers = selectedTickers.value
-    if (sources.size === 0 && tickers.size === 0) return items.value
+    const query = searchQuery.value.toLowerCase()
+    const hasFilters = sources.size > 0 || tickers.size > 0 || query.length > 0
+    if (!hasFilters) return items.value
     return items.value.filter((item) => {
       const matchesSource = sources.size === 0 || sources.has(item.source)
       const matchesTicker = tickers.size === 0 || item.tickers.some(t => tickers.has(t))
-      return matchesSource && matchesTicker
+      const matchesSearch = query.length === 0
+        || item.title.toLowerCase().includes(query)
+        || item.body.toLowerCase().includes(query)
+      return matchesSource && matchesTicker && matchesSearch
     })
   })
 
   const hasActiveFilters = computed(() =>
-    selectedSources.value.size > 0 || selectedTickers.value.size > 0,
+    selectedSources.value.size > 0 || selectedTickers.value.size > 0 || searchQuery.value.length > 0,
   )
 
   const filteredCount = computed(() => filteredItems.value.length)
@@ -67,9 +73,14 @@ export const useNewsStore = defineStore('news', () => {
     selectedTickers.value = next
   }
 
+  function setSearchQuery(query: string) {
+    searchQuery.value = query
+  }
+
   function clearFilters() {
     selectedSources.value = new Set()
     selectedTickers.value = new Set()
+    searchQuery.value = ''
   }
 
   // Prune orphaned selections
@@ -84,9 +95,9 @@ export const useNewsStore = defineStore('news', () => {
   })
 
   return {
-    items, connectionStatus, selectedSources, selectedTickers,
+    items, connectionStatus, selectedSources, selectedTickers, searchQuery,
     newsCount, isConnected, availableSources, availableTickers,
     filteredItems, hasActiveFilters, filteredCount,
-    addNews, setConnectionStatus, toggleSource, toggleTicker, clearFilters,
+    addNews, setConnectionStatus, toggleSource, toggleTicker, setSearchQuery, clearFilters,
   }
 })

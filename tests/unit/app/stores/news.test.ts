@@ -254,4 +254,57 @@ describe('useNewsStore', () => {
       expect(store.filteredCount).toBe(1)
     })
   })
+
+  describe('searchQuery', () => {
+    it('should filter by title (case-insensitive)', () => {
+      const store = useNewsStore()
+      store.addNews(createNewsItem({ id: 'a', title: 'Bitcoin hits ATH' }))
+      store.addNews(createNewsItem({ id: 'b', title: 'Ethereum update' }))
+      store.setSearchQuery('bitcoin')
+      expect(store.filteredItems).toHaveLength(1)
+      expect(store.filteredItems[0].id).toBe('a')
+    })
+
+    it('should filter by body (case-insensitive)', () => {
+      const store = useNewsStore()
+      store.addNews(createNewsItem({ id: 'a', title: 'News', body: 'SEC approves ETF' }))
+      store.addNews(createNewsItem({ id: 'b', title: 'News', body: 'Market update' }))
+      store.setSearchQuery('etf')
+      expect(store.filteredItems).toHaveLength(1)
+      expect(store.filteredItems[0].id).toBe('a')
+    })
+
+    it('should return all items when query is empty', () => {
+      const store = useNewsStore()
+      store.addNews(createNewsItem())
+      store.addNews(createNewsItem())
+      store.setSearchQuery('')
+      expect(store.filteredItems).toHaveLength(2)
+    })
+
+    it('should AND with source/ticker filters', () => {
+      const store = useNewsStore()
+      store.addNews(createNewsItem({ id: 'tw-btc', source: 'Twitter', title: 'Bitcoin rally' }))
+      store.addNews(createNewsItem({ id: 'tw-eth', source: 'Twitter', title: 'Ethereum dip' }))
+      store.addNews(createNewsItem({ id: 'bn-btc', source: 'Binance', title: 'Bitcoin listing' }))
+      store.toggleSource('Twitter')
+      store.setSearchQuery('bitcoin')
+      expect(store.filteredItems).toHaveLength(1)
+      expect(store.filteredItems[0].id).toBe('tw-btc')
+    })
+
+    it('should be included in hasActiveFilters', () => {
+      const store = useNewsStore()
+      expect(store.hasActiveFilters).toBe(false)
+      store.setSearchQuery('test')
+      expect(store.hasActiveFilters).toBe(true)
+    })
+
+    it('should be cleared by clearFilters', () => {
+      const store = useNewsStore()
+      store.setSearchQuery('test')
+      store.clearFilters()
+      expect(store.searchQuery).toBe('')
+    })
+  })
 })

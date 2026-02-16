@@ -40,5 +40,6 @@ export interface TreeOfAlphaAction {
 export type WsClientEvent
   = | { type: 'news', data: import('./news').SerializedNewsItem }
     | { type: 'status', status: ConnectionStatus }
+    | { type: 'alert', data: import('./alert').SerializedAlertEvent }
 
 export type ConnectionStatus = 'connected' | 'reconnecting' | 'disconnected'

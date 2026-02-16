@@ -12,8 +12,8 @@ Dashboard fonctionnel affichant en temps réel les news crypto provenant de Tree
 | 2 | Normalisation et persistance des news | PR #2, #3 | Done |
 | 3 | Feed temps réel (affichage) | PR #5 | Done |
 | 4 | Filtrage par source et ticker | PR #6 | Done |
-| 5 | Recherche full-text | — | Pending |
-| 6 | Alertes in-app | — | Pending |
+| 5 | Recherche full-text | PR #7 | Done |
+| 6 | Alertes in-app | PR #8 | Done |
 | 7 | Page d'historique avec pagination | — | Pending |
 | 8 | Design responsive, thème sombre | — | Pending |
 

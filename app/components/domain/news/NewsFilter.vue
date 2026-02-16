@@ -26,7 +26,9 @@ function isSelected(set: Set<string>, value: string): boolean {
       type="text"
       placeholder="Search news..."
       :value="searchQuery"
-      class="w-full bg-bg-tertiary text-text-primary text-sm rounded-lg px-3 py-1.5 placeholder-text-secondary outline-none focus:ring-1 focus:ring-text-accent"
+      class="w-full bg-bg-tertiary text-text-primary text-sm rounded-lg
+        px-3 py-1.5 placeholder-text-secondary outline-none
+        focus:ring-1 focus:ring-text-accent"
       @input="emit('update:searchQuery', ($event.target as HTMLInputElement).value)"
     >
 

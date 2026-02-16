@@ -1,20 +1,37 @@
 <script setup lang="ts">
 import { useNewsStore } from '../../stores/news'
 import ConnectionStatus from '../domain/news/ConnectionStatus.vue'
+import AlertBell from '../domain/alerts/AlertBell.vue'
 
-const store = useNewsStore()
+const newsStore = useNewsStore()
 </script>
 
 <template>
   <header class="flex items-center justify-between px-6 py-3 bg-bg-secondary border-b border-bg-tertiary">
-    <div class="flex items-center gap-3">
-      <h1 class="text-lg font-bold text-text-primary tracking-tight">
+    <div class="flex items-center gap-4">
+      <NuxtLink
+        to="/"
+        class="text-lg font-bold text-text-primary tracking-tight hover:text-text-accent transition-colors"
+      >
         CryptoFeed
-      </h1>
+      </NuxtLink>
       <span class="text-xs text-text-secondary font-mono">
-        {{ store.hasActiveFilters ? `${store.filteredCount}/${store.newsCount}` : store.newsCount }} news
+        {{
+          newsStore.hasActiveFilters
+            ? `${newsStore.filteredCount}/${newsStore.newsCount}`
+            : newsStore.newsCount
+        }} news
       </span>
+      <NuxtLink
+        to="/alerts"
+        class="text-sm text-text-secondary hover:text-text-accent transition-colors"
+      >
+        Alerts
+      </NuxtLink>
     </div>
-    <ConnectionStatus :status="store.connectionStatus" />
+    <div class="flex items-center gap-3">
+      <AlertBell />
+      <ConnectionStatus :status="newsStore.connectionStatus" />
+    </div>
   </header>
 </template>

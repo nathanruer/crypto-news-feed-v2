@@ -1,4 +1,6 @@
 import { broadcast, connectedPeersCount } from '../../utils/ws-broadcast'
+import { evaluateNewsAgainstRules } from '../../utils/alert-evaluation'
+import { getActiveRules, insertAlertEvent } from '../../services/alert.service'
 import type { NewsItem } from '../../../shared/types/news'
 
 const SOURCES = ['Twitter', 'Blog', 'Binance', 'CoinDesk', 'The Block']
@@ -14,7 +16,7 @@ const HEADLINES = [
   'Whale moves 10,000 BTC to cold storage',
 ]
 
-export default defineEventHandler(() => {
+export default defineEventHandler(async () => {
   if (process.env.NODE_ENV === 'production') {
     throw createError({ statusCode: 404 })
   }
@@ -40,5 +42,12 @@ export default defineEventHandler(() => {
   const peers = connectedPeersCount()
   broadcast({ type: 'news', data: newsItem })
 
-  return { ok: true, peers, id: newsItem.id, title: newsItem.title }
+  // Evaluate alert rules and broadcast matches
+  const matches = evaluateNewsAgainstRules(newsItem, getActiveRules())
+  for (const match of matches) {
+    const event = await insertAlertEvent(match)
+    if (event) broadcast({ type: 'alert', data: event })
+  }
+
+  return { ok: true, peers, id: newsItem.id, title: newsItem.title, alerts: matches.length }
 })

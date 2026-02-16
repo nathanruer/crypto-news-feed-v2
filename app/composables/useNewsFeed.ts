@@ -1,6 +1,10 @@
 import { useNewsStore } from '../stores/news'
+import { useAlertsStore } from '../stores/alerts'
+import { useToast } from './useToast'
 import { deserializeNewsItem } from '../utils/deserialize-news-item'
+import { playAlertSound } from '../utils/play-alert-sound'
 import type { WsClientEvent } from '../../shared/types/ws'
+import type { AlertEvent } from '../../shared/types/alert'
 
 const BASE_RECONNECT_MS = 1_000
 const MAX_RECONNECT_MS = 30_000
@@ -32,15 +36,9 @@ export function useNewsFeed() {
     }
 
     ws.onmessage = (event) => {
-      const store = useNewsStore()
       try {
         const message = JSON.parse(event.data) as WsClientEvent
-        if (message.type === 'status') {
-          store.setConnectionStatus(message.status)
-        }
-        else if (message.type === 'news') {
-          store.addNews(deserializeNewsItem(message.data))
-        }
+        handleMessage(message)
       }
       catch {
         // Ignore malformed messages
@@ -57,6 +55,26 @@ export function useNewsFeed() {
     ws.onerror = () => {
       // Close handler will trigger reconnection
     }
+  }
+
+  function handleMessage(message: WsClientEvent) {
+    if (message.type === 'status') {
+      useNewsStore().setConnectionStatus(message.status)
+    }
+    else if (message.type === 'news') {
+      useNewsStore().addNews(deserializeNewsItem(message.data))
+    }
+    else if (message.type === 'alert') {
+      handleAlertEvent(message.data as AlertEvent)
+    }
+  }
+
+  function handleAlertEvent(event: AlertEvent) {
+    const alertsStore = useAlertsStore()
+    const { addToast } = useToast()
+    alertsStore.addAlertEvent(event)
+    addToast(`Alert: ${event.ruleName} — ${event.newsTitle}`, 'alert')
+    if (alertsStore.soundEnabled) playAlertSound()
   }
 
   function scheduleReconnect() {

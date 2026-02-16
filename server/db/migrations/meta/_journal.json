@@ -15,6 +15,13 @@
       "when": 1771150660358,
       "tag": "0001_oval_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1771250467604,
+      "tag": "0002_wild_gamora",
+      "breakpoints": true
     }
   ]
 }

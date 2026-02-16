@@ -1,4 +1,4 @@
-import { pgTable, text, timestamp, jsonb, varchar, uuid, boolean } from 'drizzle-orm/pg-core'
+import { pgTable, text, timestamp, jsonb, varchar, uuid, boolean, index } from 'drizzle-orm/pg-core'
 
 export const newsItems = pgTable('news_items', {
   id: text('id').primaryKey(),
@@ -11,7 +11,9 @@ export const newsItems = pgTable('news_items', {
   time: timestamp('time', { withTimezone: true }).notNull(),
   receivedAt: timestamp('received_at', { withTimezone: true }).notNull(),
   rawData: jsonb('raw_data').notNull(),
-})
+}, table => [
+  index('idx_news_items_time').on(table.time),
+])
 
 export const alertRules = pgTable('alert_rules', {
   id: uuid('id').primaryKey().defaultRandom(),

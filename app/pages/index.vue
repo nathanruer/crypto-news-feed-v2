@@ -10,7 +10,12 @@ useHead({ title: 'CryptoFeed — Dashboard' })
 const store = useNewsStore()
 const { connect, disconnect } = useNewsFeed()
 
-onMounted(() => {
+async function loadMore() {
+  await store.fetchNews(store.currentPage + 1)
+}
+
+onMounted(async () => {
+  await store.fetchNews(1)
   connect()
 })
 
@@ -35,7 +40,10 @@ onUnmounted(() => {
     <NewsList
       :items="store.filteredItems"
       :has-active-filters="store.hasActiveFilters"
+      :has-more="store.hasMore"
+      :is-loading="store.isLoadingNews"
       class="flex-1 min-h-0"
+      @load-more="loadMore"
     />
   </div>
 </template>

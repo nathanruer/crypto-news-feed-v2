@@ -6,7 +6,11 @@ import NewsCard from './NewsCard.vue'
 const props = defineProps<{
   items: NewsItem[]
   hasActiveFilters?: boolean
+  hasMore?: boolean
+  isLoading?: boolean
 }>()
+
+const emit = defineEmits<{ 'load-more': [] }>()
 
 const scrollContainer = ref<HTMLElement | null>(null)
 const userHasScrolled = ref(false)
@@ -35,6 +39,23 @@ watch(() => props.items.length, async () => {
         :key="item.id"
         :item="item"
       />
+
+      <div
+        v-if="hasMore"
+        class="flex justify-center py-4"
+      >
+        <button
+          data-testid="load-more-button"
+          :disabled="isLoading"
+          class="px-6 py-2 text-sm text-text-secondary
+            bg-bg-tertiary rounded-lg hover:text-text-primary
+            transition-colors cursor-pointer disabled:opacity-50
+            disabled:cursor-not-allowed"
+          @click="emit('load-more')"
+        >
+          {{ isLoading ? 'Loading...' : 'Load more' }}
+        </button>
+      </div>
     </template>
 
     <div

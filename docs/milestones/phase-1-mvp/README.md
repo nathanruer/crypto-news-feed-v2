@@ -14,7 +14,7 @@ Dashboard fonctionnel affichant en temps réel les news crypto provenant de Tree
 | 4 | Filtrage par source et ticker | PR #6 | Done |
 | 5 | Recherche full-text | PR #7 | Done |
 | 6 | Alertes in-app | PR #8 | Done |
-| 7 | Page d'historique avec pagination | — | Pending |
+| 7 | Chargement news DB + pagination | PR #9 | Done |
 | 8 | Design responsive, thème sombre | — | Pending |
 
 ## Backlog (chores)

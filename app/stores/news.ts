@@ -1,9 +1,8 @@
 import { defineStore } from 'pinia'
 import { ref, computed, watch } from 'vue'
-import type { NewsItem } from '../../shared/types/news'
+import type { NewsItem, SerializedNewsItem } from '../../shared/types/news'
 import type { ConnectionStatus } from '../../shared/types/ws'
-
-const MAX_ITEMS = 50
+import { deserializeNewsItem } from '../utils/deserialize-news-item'
 
 export const useNewsStore = defineStore('news', () => {
   const items = ref<NewsItem[]>([])
@@ -11,6 +10,9 @@ export const useNewsStore = defineStore('news', () => {
   const selectedSources = ref<Set<string>>(new Set())
   const selectedTickers = ref<Set<string>>(new Set())
   const searchQuery = ref('')
+  const currentPage = ref(0)
+  const hasMore = ref(true)
+  const isLoadingNews = ref(false)
 
   // --- Getters ---
   const newsCount = computed(() => items.value.length)
@@ -50,8 +52,27 @@ export const useNewsStore = defineStore('news', () => {
   function addNews(item: NewsItem) {
     if (items.value.some(existing => existing.id === item.id)) return
     items.value.unshift(item)
-    if (items.value.length > MAX_ITEMS) {
-      items.value = items.value.slice(0, MAX_ITEMS)
+  }
+
+  async function fetchNews(page: number = 1) {
+    if (isLoadingNews.value) return
+    isLoadingNews.value = true
+    try {
+      const res = await $fetch<{
+        data: SerializedNewsItem[]
+        meta: { total: number, page: number, pageSize: number }
+      }>('/api/news', { params: { page, pageSize: 50 } })
+
+      const deserialized = res.data.map(deserializeNewsItem)
+      const existingIds = new Set(items.value.map(i => i.id))
+      const unique = deserialized.filter(i => !existingIds.has(i.id))
+      items.value.push(...unique)
+
+      currentPage.value = res.meta.page
+      hasMore.value = res.meta.page * res.meta.pageSize < res.meta.total
+    }
+    finally {
+      isLoadingNews.value = false
     }
   }
 
@@ -96,8 +117,10 @@ export const useNewsStore = defineStore('news', () => {
 
   return {
     items, connectionStatus, selectedSources, selectedTickers, searchQuery,
+    currentPage, hasMore, isLoadingNews,
     newsCount, isConnected, availableSources, availableTickers,
     filteredItems, hasActiveFilters, filteredCount,
-    addNews, setConnectionStatus, toggleSource, toggleTicker, setSearchQuery, clearFilters,
+    addNews, fetchNews, setConnectionStatus,
+    toggleSource, toggleTicker, setSearchQuery, clearFilters,
   }
 })

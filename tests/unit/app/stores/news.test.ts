@@ -1,7 +1,10 @@
-import { describe, it, expect, beforeEach } from 'vitest'
+import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
 import { useNewsStore } from '../../../../app/stores/news'
 import type { NewsItem } from '../../../../shared/types/news'
+
+const mockFetch = vi.fn()
+globalThis.$fetch = mockFetch
 
 function createNewsItem(overrides: Partial<NewsItem> = {}): NewsItem {
   return {
@@ -40,13 +43,12 @@ describe('useNewsStore', () => {
       expect(store.items[1].id).toBe('old')
     })
 
-    it('should cap at 50 items', () => {
+    it('should not cap items (no max limit)', () => {
       const store = useNewsStore()
       for (let i = 0; i < 55; i++) {
         store.addNews(createNewsItem({ id: `item-${i}` }))
       }
-      expect(store.items).toHaveLength(50)
-      expect(store.items[0].id).toBe('item-54')
+      expect(store.items).toHaveLength(55)
     })
 
     it('should not add duplicate items with the same id', () => {
@@ -305,6 +307,128 @@ describe('useNewsStore', () => {
       store.setSearchQuery('test')
       store.clearFilters()
       expect(store.searchQuery).toBe('')
+    })
+  })
+
+  describe('fetchNews', () => {
+    beforeEach(() => {
+      mockFetch.mockReset()
+    })
+
+    it('should populate items from API response', async () => {
+      mockFetch.mockResolvedValue({
+        data: [
+          { ...createNewsItem({ id: 'api-1' }), time: '2025-06-01T12:00:00.000Z', receivedAt: '2025-06-01T12:00:01.000Z' },
+        ],
+        meta: { total: 1, page: 1, pageSize: 50 },
+      })
+
+      const store = useNewsStore()
+      await store.fetchNews(1)
+
+      expect(store.items).toHaveLength(1)
+      expect(store.items[0].id).toBe('api-1')
+    })
+
+    it('should set currentPage and hasMore correctly', async () => {
+      mockFetch.mockResolvedValue({
+        data: Array.from({ length: 50 }, (_, i) => ({
+          ...createNewsItem({ id: `item-${i}` }),
+          time: '2025-06-01T12:00:00.000Z',
+          receivedAt: '2025-06-01T12:00:01.000Z',
+        })),
+        meta: { total: 100, page: 1, pageSize: 50 },
+      })
+
+      const store = useNewsStore()
+      await store.fetchNews(1)
+
+      expect(store.currentPage).toBe(1)
+      expect(store.hasMore).toBe(true)
+    })
+
+    it('should set hasMore=false on last page', async () => {
+      mockFetch.mockResolvedValue({
+        data: [
+          { ...createNewsItem({ id: 'last' }), time: '2025-06-01T12:00:00.000Z', receivedAt: '2025-06-01T12:00:01.000Z' },
+        ],
+        meta: { total: 51, page: 2, pageSize: 50 },
+      })
+
+      const store = useNewsStore()
+      await store.fetchNews(2)
+
+      expect(store.hasMore).toBe(false)
+    })
+
+    it('should not add duplicate items from API', async () => {
+      const store = useNewsStore()
+      store.addNews(createNewsItem({ id: 'dup-1' }))
+
+      mockFetch.mockResolvedValue({
+        data: [
+          { ...createNewsItem({ id: 'dup-1' }), time: '2025-06-01T12:00:00.000Z', receivedAt: '2025-06-01T12:00:01.000Z' },
+          { ...createNewsItem({ id: 'new-1' }), time: '2025-06-01T11:00:00.000Z', receivedAt: '2025-06-01T11:00:01.000Z' },
+        ],
+        meta: { total: 2, page: 1, pageSize: 50 },
+      })
+
+      await store.fetchNews(1)
+
+      expect(store.items).toHaveLength(2)
+    })
+
+    it('should append items (not prepend) from API', async () => {
+      const store = useNewsStore()
+      store.addNews(createNewsItem({ id: 'ws-live' }))
+
+      mockFetch.mockResolvedValue({
+        data: [
+          { ...createNewsItem({ id: 'api-old' }), time: '2025-06-01T10:00:00.000Z', receivedAt: '2025-06-01T10:00:01.000Z' },
+        ],
+        meta: { total: 1, page: 1, pageSize: 50 },
+      })
+
+      await store.fetchNews(1)
+
+      expect(store.items[0].id).toBe('ws-live')
+      expect(store.items[1].id).toBe('api-old')
+    })
+
+    it('should set isLoadingNews during fetch', async () => {
+      let resolvePromise: (v: unknown) => void
+      mockFetch.mockReturnValue(new Promise((resolve) => {
+        resolvePromise = resolve
+      }))
+
+      const store = useNewsStore()
+      const promise = store.fetchNews(1)
+
+      expect(store.isLoadingNews).toBe(true)
+
+      resolvePromise!({
+        data: [],
+        meta: { total: 0, page: 1, pageSize: 50 },
+      })
+      await promise
+
+      expect(store.isLoadingNews).toBe(false)
+    })
+
+    it('should guard against concurrent fetches', async () => {
+      let callCount = 0
+      mockFetch.mockImplementation(() => {
+        callCount++
+        return Promise.resolve({
+          data: [],
+          meta: { total: 0, page: 1, pageSize: 50 },
+        })
+      })
+
+      const store = useNewsStore()
+      await Promise.all([store.fetchNews(1), store.fetchNews(1)])
+
+      expect(callCount).toBe(1)
     })
   })
 })

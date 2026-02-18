@@ -1,0 +1,1 @@
+CREATE INDEX "idx_news_items_time" ON "news_items" USING btree ("time");

@@ -4,6 +4,7 @@ import { normalizeToNewsItem } from '../utils/normalizer'
 import { insertNewsItem } from '../services/news.service'
 import { evaluateNewsAgainstRules } from '../utils/alert-evaluation'
 import { getActiveRules, insertAlertEvent, refreshRulesCache } from '../services/alert.service'
+import { logger } from '../utils/logger'
 
 const WS_URL = process.env.TREE_OF_ALPHA_WS_URL || 'wss://news.treeofalpha.com/ws'
 
@@ -13,7 +14,7 @@ export default defineNitroPlugin(async (nitro) => {
     await refreshRulesCache()
   }
   catch {
-    console.error('[tree-of-alpha] Failed to load alert rules cache')
+    logger.error('Failed to load alert rules cache')
   }
 
   const service = new TreeOfAlphaService(() => new WebSocket(WS_URL))
@@ -26,7 +27,7 @@ export default defineNitroPlugin(async (nitro) => {
       await insertNewsItem(newsItem)
     }
     catch (error) {
-      console.error('[tree-of-alpha] Failed to persist news item:', newsItem.id, error)
+      logger.error({ newsId: newsItem.id, error }, 'Failed to persist news item')
     }
 
     // Evaluate alert rules and broadcast matches
@@ -38,7 +39,7 @@ export default defineNitroPlugin(async (nitro) => {
       }
     }
     catch (error) {
-      console.error('[tree-of-alpha] Failed to evaluate alerts:', newsItem.id, error)
+      logger.error({ newsId: newsItem.id, error }, 'Failed to evaluate alerts')
     }
   })
 

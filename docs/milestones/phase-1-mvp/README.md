@@ -21,12 +21,12 @@ Dashboard fonctionnel affichant en temps réel les news crypto provenant de Tree
 
 | Chore | Description | Status |
 |-------|-------------|--------|
-| Logger structuré | Remplacer `console.error/log` par un logger (consola/pino) avec niveaux, contexte, format JSON en prod | Pending |
+| Logger structuré | Remplacer `console.error/log` par un logger (consola/pino) avec niveaux, contexte, format JSON en prod | Done (PR #11) |
 
 ## Critère de complétion
 
-- [ ] Toutes les features sont livrées et validées
-- [ ] `bun test` — tous les tests passent
-- [ ] `bun lint` — aucune erreur
-- [ ] `bun build` — le build passe
+- [x] Toutes les features sont livrées et validées
+- [x] `bun test` — tous les tests passent (189)
+- [x] `bun lint` — aucune erreur
+- [x] `bun build` — le build passe
 - [ ] Le dashboard est utilisable de bout en bout

@@ -107,4 +107,42 @@ describe('NewsFilter', () => {
     })
     expect(wrapper.find('[data-testid="clear-filters"]').exists()).toBe(true)
   })
+
+  describe('collapsable filter toggle', () => {
+    it('should render filter toggle button', () => {
+      const wrapper = mount(NewsFilter, { props: defaultProps })
+      expect(wrapper.find('[data-testid="filter-toggle"]').exists()).toBe(true)
+    })
+
+    it('should show active filter count in badge', () => {
+      const wrapper = mount(NewsFilter, {
+        props: {
+          ...defaultProps,
+          selectedSources: new Set(['Binance']),
+          selectedTickers: new Set(['BTC', 'ETH']),
+        },
+      })
+      const badge = wrapper.find('[data-testid="filter-badge"]')
+      expect(badge.exists()).toBe(true)
+      expect(badge.text()).toBe('3')
+    })
+
+    it('should not show badge when no filters active', () => {
+      const wrapper = mount(NewsFilter, { props: defaultProps })
+      expect(wrapper.find('[data-testid="filter-badge"]').exists()).toBe(false)
+    })
+
+    it('should toggle chip visibility on button click', async () => {
+      const wrapper = mount(NewsFilter, { props: defaultProps })
+      const chipSection = () => wrapper.find('[data-testid="filter-chips"]')
+
+      expect(chipSection().exists()).toBe(false)
+
+      await wrapper.find('[data-testid="filter-toggle"]').trigger('click')
+      expect(chipSection().exists()).toBe(true)
+
+      await wrapper.find('[data-testid="filter-toggle"]').trigger('click')
+      expect(chipSection().exists()).toBe(false)
+    })
+  })
 })

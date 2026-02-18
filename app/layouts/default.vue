@@ -19,7 +19,7 @@ onMounted(async () => {
 <template>
   <div class="min-h-screen bg-bg-primary text-text-primary">
     <AppHeader />
-    <main class="px-6 py-4">
+    <main class="px-4 sm:px-6 py-4">
       <slot />
     </main>
     <ToastContainer />

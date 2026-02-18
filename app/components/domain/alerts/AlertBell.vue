@@ -57,8 +57,8 @@ async function handleMarkAsRead() {
     <div
       v-if="isOpen"
       data-testid="alert-dropdown"
-      class="absolute right-0 top-full mt-2 w-80 bg-bg-secondary border
-        border-bg-tertiary rounded-lg shadow-xl z-50 overflow-hidden"
+      class="fixed top-14 inset-x-4 sm:absolute sm:inset-x-auto sm:top-auto sm:right-0 sm:mt-2 sm:w-80
+        bg-bg-secondary border border-bg-tertiary rounded-lg shadow-xl z-50 overflow-hidden"
     >
       <div class="flex items-center justify-between px-4 py-2.5 border-b border-bg-tertiary">
         <span class="text-sm font-medium text-text-primary">Alerts</span>

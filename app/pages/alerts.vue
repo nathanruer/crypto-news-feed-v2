@@ -28,7 +28,7 @@ async function handleDelete(id: string) {
 
 <template>
   <div class="max-w-2xl mx-auto space-y-6">
-    <div class="flex items-center justify-between">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h2 class="text-lg font-bold text-text-primary mb-1">
           Alert Rules

@@ -20,7 +20,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <article class="bg-bg-secondary rounded-lg p-4 border-l-2 border-text-accent">
+  <article class="bg-bg-secondary rounded-lg p-3 sm:p-4 border-l-2 border-text-accent">
     <header class="flex items-center justify-between mb-2">
       <span class="text-xs font-medium text-text-accent uppercase tracking-wide">
         {{ item.sourceName }}
